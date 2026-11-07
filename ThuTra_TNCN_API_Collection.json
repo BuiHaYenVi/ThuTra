@@ -1,0 +1,356 @@
+{
+  "info": {
+    "_postman_id": "thutra-tncn-api-2026",
+    "name": "ThuTra TNCN - Bộ API Thẩm Tra & Quyết Toán Thuế",
+    "description": "Bộ sưu tập Postman Collection đầy đủ để kiểm thử toàn diện các API của Hệ thống ThuTra TNCN (Bao gồm các API mới: Chatbot AI, Kho tri thức RAG, Xuất XML 02/QTT có ký số).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "testProfileId",
+      "value": "4e43e9e0-2bbf-49be-8a65-6dcb1c73cb6d",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "01. Sức khỏe Hệ thống (Health)",
+      "item": [
+        {
+          "name": "1.1 Kiểm tra Uptime Máy chủ",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02. Chatbot AI Tư vấn Thuế (Mới bổ sung)",
+      "item": [
+        {
+          "name": "2.1 Lấy danh sách câu hỏi gợi ý",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/chat/suggestions",
+              "host": ["{{baseUrl}}"],
+              "path": ["chat", "suggestions"]
+            }
+          }
+        },
+        {
+          "name": "2.2 Hỏi đáp AI - Giảm trừ Người phụ thuộc",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"Tôi muốn đăng ký người phụ thuộc là cha mẹ ngoài độ tuổi lao động thì cần điều kiện gì?\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/chat/ask",
+              "host": ["{{baseUrl}}"],
+              "path": ["chat", "ask"]
+            }
+          }
+        },
+        {
+          "name": "2.3 Hỏi đáp AI - Thu nhập vãng lai 10%",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"Tôi có thu nhập vãng lai khấu trừ 10% tại 2 công ty thì quyết toán như thế nào?\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/chat/ask",
+              "host": ["{{baseUrl}}"],
+              "path": ["chat", "ask"]
+            }
+          }
+        },
+        {
+          "name": "2.4 Hỏi đáp AI - Miễn nộp thuế dưới 50k",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"Số thuế phát sinh nộp thêm dưới 50.000 đồng có phải nộp tiền thuế không?\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/chat/ask",
+              "host": ["{{baseUrl}}"],
+              "path": ["chat", "ask"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "03. Xác thực & Tài khoản (Auth & User)",
+      "item": [
+        {
+          "name": "3.1 Đăng ký Tài khoản Người nộp thuế Mới",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.accessToken) {",
+                  "    pm.collectionVariables.set('accessToken', jsonData.data.accessToken);",
+                  "    console.log('Đã tự động lưu Token mới:', jsonData.data.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"testuser_2026@thutra.vn\",\n  \"password\": \"User@SecurePassword2026\",\n  \"fullName\": \"Trần Văn Minh\",\n  \"phone\": \"0912345678\",\n  \"cccd\": \"079095999888\",\n  \"mst\": \"8499988811\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "3.2 Đăng nhập (Tự động lưu Bearer Token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.accessToken) {",
+                  "    pm.collectionVariables.set('accessToken', jsonData.data.accessToken);",
+                  "    console.log('Đã đăng nhập và lưu Token thành công!');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"testuser_2026@thutra.vn\",\n  \"password\": \"User@SecurePassword2026\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "3.3 Xem thông tin tài khoản hiện tại (GET /auth/me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        },
+        {
+          "name": "3.4 Cập nhật Hồ sơ cá nhân (PUT /users/profile)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Trần Văn Minh\",\n  \"phone\": \"0988999888\",\n  \"address\": \"Số 123 Lê Lợi, Quận 1, TP. Hồ Chí Minh\",\n  \"taxDepartmentName\": \"Cục Thuế TP Hồ Chí Minh\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "profile"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "04. Thẩm tra & Chiết tính Thuế (Audit & 15 Rules)",
+      "item": [
+        {
+          "name": "4.1 Tính thử nhanh Thuế TNCN lũy tiến 7 bậc (Public)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"grossIncome\": 240000000,\n  \"dependentsCount\": 1,\n  \"insuranceAmount\": 18900000,\n  \"taxWithheld\": 14200000\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/audit/calculate",
+              "host": ["{{baseUrl}}"],
+              "path": ["audit", "calculate"]
+            }
+          }
+        },
+        {
+          "name": "4.2 Kích hoạt Chạy Thẩm tra 15 Rules trên Hồ sơ",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/audit/run/{{testProfileId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["audit", "run", "{{testProfileId}}"]
+            }
+          }
+        },
+        {
+          "name": "4.3 Xem Lịch sử Thẩm tra của Hồ sơ",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/audit/history/{{testProfileId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["audit", "history", "{{testProfileId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "05. Xuất Tờ khai eTax XML & Tóm tắt (Mới bổ sung)",
+      "item": [
+        {
+          "name": "5.1 Xuất Tờ khai XML 02/QTT-TNCN có Chữ ký số",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/audit/export-xml/{{testProfileId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["audit", "export-xml", "{{testProfileId}}"]
+            }
+          }
+        },
+        {
+          "name": "5.2 Lấy Bản tóm tắt Quyết toán & Timeline Tiến độ",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/audit/summary/{{testProfileId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["audit", "summary", "{{testProfileId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "06. Kho Tri thức Pháp lý RAG (Mới bổ sung)",
+      "item": [
+        {
+          "name": "6.1 Lấy danh mục văn bản luật (TT 111, TT 80, NĐ 126)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/rag-documents",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "rag-documents"]
+            }
+          }
+        },
+        {
+          "name": "6.2 Tìm kiếm văn bản theo từ khóa",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/rag-documents?search=111",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "rag-documents"],
+              "query": [
+                { "key": "search", "value": "111" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "07. Quản trị Tham số Hệ thống (Settings & Rules)",
+      "item": [
+        {
+          "name": "7.1 Lấy Tham số Thuế & Biểu 7 Bậc Công khai",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/settings/public",
+              "host": ["{{baseUrl}}"],
+              "path": ["settings", "public"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

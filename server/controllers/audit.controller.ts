@@ -142,6 +142,60 @@ export class AuditController {
       next(error);
     }
   }
+
+  /**
+   * Endpoint: GET /api/audit/export-xml/:profileId
+   * Xuất file tờ khai XML 02/QTT-TNCN chuẩn XSD Cục Thuế có ký số điện tử
+   */
+  public async exportXml(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      if (!req.user) throw new UnauthorizedError();
+      if (!req.dbClient) throw new Error('Database Client không khả dụng.');
+
+      const profileId = req.params.profileId as string;
+      if (!profileId) throw new ValidationError('profileId là bắt buộc.');
+
+      const result = await auditService.exportXml02Qtt(req.user, profileId, req.dbClient);
+
+      const response: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        message: 'Kết xuất tờ khai XML 02/QTT-TNCN kèm chữ ký số điện tử thành công.',
+        data: result,
+        timestamp: new Date().toISOString(),
+      };
+      res.status(200).json(response);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Endpoint: GET /api/audit/summary/:profileId
+   * Lấy bản tóm tắt quyết toán, timeline và các chỉ số phục vụ Lịch sử & Theo dõi
+   */
+  public async getSummary(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      if (!req.user) throw new UnauthorizedError();
+      if (!req.dbClient) throw new Error('Database Client không khả dụng.');
+
+      const profileId = req.params.profileId as string;
+      if (!profileId) throw new ValidationError('profileId là bắt buộc.');
+
+      const result = await auditService.getSettlementSummary(req.user, profileId, req.dbClient);
+
+      const response: ApiResponse = {
+        success: true,
+        statusCode: 200,
+        message: 'Lấy bản tóm tắt quyết toán thuế thành công.',
+        data: result,
+        timestamp: new Date().toISOString(),
+      };
+      res.status(200).json(response);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export const auditController = new AuditController();

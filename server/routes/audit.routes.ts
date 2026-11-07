@@ -56,4 +56,28 @@ router.get(
   auditController.getReport
 );
 
+/**
+ * @route   GET /api/audit/export-xml/:profileId
+ * @desc    Xuất tờ khai XML 02/QTT-TNCN kèm chữ ký số điện tử
+ * @access  Private (Chỉ người sở hữu hồ sơ hoặc super_admin)
+ */
+router.get(
+  '/export-xml/:profileId',
+  authMiddleware,
+  dbSessionMiddleware,
+  auditController.exportXml
+);
+
+/**
+ * @route   GET /api/audit/summary/:profileId
+ * @desc    Lấy bản tóm tắt quyết toán, timeline phục vụ Lịch sử & Theo dõi
+ * @access  Private
+ */
+router.get(
+  '/summary/:profileId',
+  authMiddleware,
+  dbSessionMiddleware,
+  auditController.getSummary
+);
+
 export const auditRouter = router;

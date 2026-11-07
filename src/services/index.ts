@@ -11,3 +11,4 @@ export { taxDeclarationApi } from './tax-declaration.api';
 export { documentApi } from './document.api';
 export { auditApi } from './audit.api';
 export { adminApi } from './admin.api';
+export { chatApi } from './chat.api';

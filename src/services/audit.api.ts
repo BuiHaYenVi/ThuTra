@@ -44,6 +44,29 @@ export const auditApi = {
   async getAuditReport(auditRunId: string): Promise<ApiResponse<AuditReportDto>> {
     return apiClient.get<AuditReportDto>(`/audit/report/${auditRunId}`);
   },
+
+  /**
+   * Kết xuất tờ khai XML 02/QTT-TNCN chuẩn XSD có chữ ký số server-side
+   * GET /audit/export-xml/:profileId
+   */
+  async exportXml02Qtt(profileId: string): Promise<ApiResponse<{
+    profileId: string;
+    fileName: string;
+    declarationCode: string;
+    xmlContent: string;
+    checksum: string;
+    digitalSignature: any;
+  }>> {
+    return apiClient.get<any>(`/audit/export-xml/${profileId}`);
+  },
+
+  /**
+   * Lấy bản tóm tắt quyết toán thuế, các mốc timeline và số thuế hoàn/nộp thêm
+   * GET /audit/summary/:profileId
+   */
+  async getSettlementSummary(profileId: string): Promise<ApiResponse<any>> {
+    return apiClient.get<any>(`/audit/summary/${profileId}`);
+  },
 };
 
 export default auditApi;

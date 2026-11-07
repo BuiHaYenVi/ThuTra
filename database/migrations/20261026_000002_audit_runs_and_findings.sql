@@ -1,3 +1,5 @@
+SET client_encoding = 'UTF8';
+
 -- ==============================================================================
 -- HỆ THỐNG THUTRA TNCN - MIGRATION GIAI ĐOẠN 3
 -- File: database/migrations/20261026_000002_audit_runs_and_findings.sql

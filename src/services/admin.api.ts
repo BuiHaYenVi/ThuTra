@@ -64,6 +64,62 @@ export const adminApi = {
       params: query,
     });
   },
+
+  /**
+   * Lấy danh mục văn bản quy phạm pháp luật trong Kho tri thức RAG
+   * GET /admin/rag-documents
+   */
+  async getRagDocuments(search?: string): Promise<ApiResponse<any[]>> {
+    return apiClient.get<any[]>('/admin/rag-documents', {
+      params: { search },
+    });
+  },
+
+  /**
+   * Xem chi tiết 1 văn bản pháp luật RAG
+   * GET /admin/rag-documents/:id
+   */
+  async getRagDocumentById(id: string): Promise<ApiResponse<any>> {
+    return apiClient.get<any>(`/admin/rag-documents/${id}`);
+  },
+
+  /**
+   * Thêm mới văn bản pháp luật vào kho RAG
+   * POST /admin/rag-documents
+   */
+  async createRagDocument(payload: {
+    code: string;
+    title: string;
+    category: string;
+    fullContent?: string;
+    chunksCount?: number;
+  }): Promise<ApiResponse<any>> {
+    return apiClient.post<any>('/admin/rag-documents', payload);
+  },
+
+  /**
+   * Cập nhật văn bản pháp luật RAG
+   * PUT /admin/rag-documents/:id
+   */
+  async updateRagDocument(id: string, payload: any): Promise<ApiResponse<any>> {
+    return apiClient.put<any>(`/admin/rag-documents/${id}`, payload);
+  },
+
+  /**
+   * Xóa văn bản khỏi kho RAG
+   * DELETE /admin/rag-documents/:id
+   */
+  async deleteRagDocument(id: string): Promise<ApiResponse<null>> {
+    return apiClient.delete<null>(`/admin/rag-documents/${id}`);
+  },
+
+  /**
+   * Kích hoạt đồng bộ hóa vector chunks cho văn bản pháp lý
+   * POST /admin/rag-documents/:id/sync
+   */
+  async syncRagVector(id: string): Promise<ApiResponse<any>> {
+    return apiClient.post<any>(`/admin/rag-documents/${id}/sync`);
+  },
 };
 
 export default adminApi;

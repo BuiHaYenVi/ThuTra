@@ -1,3 +1,5 @@
+SET client_encoding = 'UTF8';
+
 -- ==============================================================================
 -- HỆ THỐNG THẨM TRA & QUYẾT TOÁN THUẾ THU NHẬP CÁ NHÂN (ThuTra TNCN)
 -- Database: PostgreSQL 14+ / Supabase / Neon
